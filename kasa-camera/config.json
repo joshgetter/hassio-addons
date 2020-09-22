@@ -1,0 +1,31 @@
+{
+    "name": "Kasa Camera",
+    "version": "1",
+    "slug": "kasa_cam",
+    "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams. This has been tested with the KC105.",
+    "arch": ["amd64"],
+    "startup": "before",
+    "boot": "auto",
+    "homeassistant_api": true,
+    "options": {
+        "kasausername" : null,
+        "kasapassword" : null,
+        "cameraip" : null,
+        "cameraname": "Kasa Camera"
+    },
+    "schema": {
+        "kasausername": "str",
+        "kasapassword": "str",
+        "cameraip": "str",
+        "cameraname": "str",
+        "toggleentity": "str?"
+    },
+    "ports":{
+        "80/tcp": 43330,
+        "1935/tcp": 43331
+    },
+    "ports_description":{
+        "80/tcp": "HLS stream output",
+        "1935/tcp": "RTMP stream output"
+    }
+  }
