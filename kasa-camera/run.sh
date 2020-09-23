@@ -6,7 +6,7 @@ nginx
 echo "Nginx Started"
 
 echo "Starting controller"
-#python3 /Controller/Controller.py
+python3 -u /Controller/Controller.py
 
 # TESTING - keeps docker container running
-tail -f /dev/null
+#tail -f /dev/null
