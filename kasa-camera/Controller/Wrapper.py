@@ -5,7 +5,7 @@ import HealthChecker
 
 class FfmpegWrapper:
     def startProcess(self):
-        print("Starting Ffmpeg")
+        print("[Wrapper] Starting Ffmpeg.")
         startCommand = [
             'ffmpeg',
             '-nostdin',
@@ -43,24 +43,19 @@ class FfmpegWrapper:
             '-y',
             f'/tmp/streaming/thumbnails/{self.controller.config["cameraname"]}.jpg'
         ]
-        print("Start Command:")
-        print(startCommand)
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.controller.state.isRunning = True
         self.controller.state.isErrored = False
-        asyncio.ensure_future(self.healthChecker.start())
-        print("Ffmpeg started")
 
     def stopProcess(self):
         # TODO - Perhaps killall ffmpeg would be better?
-        print("Killing Ffmpeg")
-        self.healthChecker.stop()
+        print("[Wrapper] Killing Ffmpeg.")
         self.ffmpegProcess.kill()
         self.controller.state.isRunning = False
         self.controller.state.isErrored = False
 
     def restartProcess(self):
-        print("Restarting Ffmpeg")
+        print("[Wrapper] Restarting Ffmpeg.")
         self.stopProcess()
         self.startProcess()
 
@@ -74,11 +69,10 @@ class FfmpegWrapper:
         encodedString = str(encodedBytes, "utf-8")
         return encodedString
 
-    def __init__(self, controller, healthCheckInterval):
+    def __init__(self, controller, healthCheckSleepInterval):
         self.controller = controller
         self.authToken = self.buildAuthToken()
         
-        # Setup health checker
-        self.healthChecker = HealthChecker.HealthChecker(controller, healthCheckInterval)
-
+        # Setup Health Checker
+        self.healthChecker = HealthChecker.HealthChecker(controller, healthCheckSleepInterval)
 

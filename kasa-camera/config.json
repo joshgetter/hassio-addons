@@ -1,9 +1,9 @@
 {
     "name": "Kasa Camera",
-    "version": "1",
+    "version": "1.2",
     "slug": "kasa_cam",
-    "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams. This has been tested with the KC105.",
-    "arch": ["amd64"],
+    "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
+    "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
     "startup": "before",
     "boot": "auto",
     "homeassistant_api": true,
@@ -12,7 +12,7 @@
         "kasausername" : null,
         "kasapassword" : null,
         "cameraip" : null,
-        "cameraname": "Kasa Camera"
+        "cameraname": "kasacam"
     },
     "schema": {
         "kasausername": "str",

@@ -15,32 +15,30 @@ class HAListener:
             if(parsedMessage["type"] == "event"):
                 if(parsedMessage["event"]["data"]["entity_id"] == self.controller.config["toggleentity"]):
                     toggleState = parsedMessage["event"]["data"]["new_state"]["state"]
+                    print(f"[HAListener] toggle state: {toggleState}.")
                     if(toggleState == "off"):
-                        print("Toggle is off")
                         self.controller.state.isCameraEnabled = False
                     else:
-                        print("Toggle is on")
                         self.controller.state.isCameraEnabled = True
 
     async def start(self):
-        print("Starting HA Listener")
+        if self.controller.config.get("toggleentity") is None:
+            # There's no need to start the HA Listener if there's not toggle entity to listen to.
+            return
         
-        print("Creating websocket")
+        print("[HAListener] Starting HA Listener.")
+        
         # Create WebSocket
         websocket = await asyncws.connect(self.HA_WEBSOCKET_URL)
-        print("WebSocket created")
 
         # Auth
-        print("Sending auth request")
         await websocket.send(json.dumps({'type': 'auth', 'access_token': self.controller.haToken}))
-        print("Auth complete")
 
         # Register listener
-        print("Registering listener")
         await websocket.send(json.dumps({'id': 1, 'type': 'subscribe_events', 'event_type': 'state_changed'}))
-        print("Listener registered")
 
         # Start looping
+        print("[HAListener] Now listening on HA WebSocket.")
         await self.websocketHandler(websocket)
 
     def __init__(self, controller):

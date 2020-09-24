@@ -5,7 +5,6 @@ class State:
         self._observers.append(callback)
 
     def notifyObservers(self, propertyName):
-        print(f'Property {propertyName} has changed. Notifying observers.')
         for callback in self._observers:
             callback(Event(changedProperty=propertyName, state=self))
 
