@@ -22,6 +22,10 @@ class HAListener:
                         self.controller.state.isCameraEnabled = True
 
     async def start(self):
+        if self.controller.config.get("toggleentity") is None:
+            # There's no need to start the HA Listener if there's not toggle entity to listen to.
+            return
+        
         print("[HAListener] Starting HA Listener.")
         
         # Create WebSocket

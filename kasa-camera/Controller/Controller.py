@@ -19,7 +19,7 @@ class Controller:
         print("[Controller] Configuration loaded.")
 
     def getToggleValue(self):
-        toggleEntity = self.config["toggleentity"]
+        toggleEntity = self.config.get("toggleentity")
         if not toggleEntity:
             # If there is no toggle provided we can assume it should always be on
             return True
