@@ -5,7 +5,7 @@ import HealthChecker
 
 class FfmpegWrapper:
     def startProcess(self):
-        print("Starting Ffmpeg")
+        print("[Wrapper] Starting Ffmpeg.")
         startCommand = [
             'ffmpeg',
             '-nostdin',
@@ -46,17 +46,16 @@ class FfmpegWrapper:
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.controller.state.isRunning = True
         self.controller.state.isErrored = False
-        print("Ffmpeg started")
 
     def stopProcess(self):
         # TODO - Perhaps killall ffmpeg would be better?
-        print("Killing Ffmpeg")
+        print("[Wrapper] Killing Ffmpeg.")
         self.ffmpegProcess.kill()
         self.controller.state.isRunning = False
         self.controller.state.isErrored = False
 
     def restartProcess(self):
-        print("Restarting Ffmpeg")
+        print("[Wrapper] Restarting Ffmpeg.")
         self.stopProcess()
         self.startProcess()
 

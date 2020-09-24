@@ -14,24 +14,25 @@ class HealthChecker:
         return hlsResponse.status_code == 404
 
     async def start(self):
+        print("[HealthChecker] Starting health checker.")
         await asyncio.sleep(self.INITIAL_DELAY)
         while True:
             isErrored = self.checkHealth()
-            print(f'[HEALTH CHECK] Error: {isErrored}')
+            if isErrored:
+                print(f'[HealthChecker] Error detected.')
             self.controller.state.isErrored = isErrored
             await asyncio.sleep(self.sleepInterval)
 
     def stop(self):
         # Cancel the running health check task
+        print("[HealthChecker] Stopping health checker.")
         self.task.cancel()
 
     def stateHandler(self, event):
         if event.changedProperty == 'isRunning':
             if event.state.isRunning:
-                print("Starting Health Checker")
                 self.task = asyncio.ensure_future(self.start())
             else:
-                print("Stopping Health Checker")
                 self.stop()
 
     def __init__(self, controller, sleepInterval):

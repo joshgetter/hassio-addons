@@ -12,9 +12,11 @@ class Controller:
     HA_REST_URL = "http://supervisor/core/api"
 
     def loadConfiguration(self, path):
+        print("[Controller] Loading configuration.")
         with open(path) as configFile:
             parsedConfig = json.load(configFile)
             return parsedConfig
+        print("[Controller] Configuration loaded.")
 
     def getToggleValue(self):
         toggleEntity = self.config["toggleentity"]
@@ -24,7 +26,6 @@ class Controller:
         
         url = f'{self.HA_REST_URL}/states/{toggleEntity}'
         headers = {"Authorization": f"Basic {self.haToken}"}
-        print(f"Making GET request to {url}")
         response = requests.get(url=url, headers=headers).json()
         return response["state"] == "on"
 
@@ -42,6 +43,8 @@ class Controller:
                 self.ffmpegWrapper.restartProcess()
 
     def run(self):
+        print("[Controller] Controller is starting.")
+
         # Set variables
         self.config = self.loadConfiguration("/data/options.json")
         self.haToken = os.environ['SUPERVISOR_TOKEN']
@@ -64,12 +67,12 @@ class Controller:
 
         # Get initial toggle value
         initialState = self.getToggleValue()
-        print(f'Initial toggle status: {initialState}')
+        print(f'[Controller] Initial toggle status: {initialState}.')
         self.state.isCameraEnabled = initialState
 
-        print("Controller is running")
+        print("[Controller] Controller is running.")
         loop.run_forever()
-        print("Exiting")
+        print("[Controller] Exiting.")
 
 def main():
    controller = Controller()
