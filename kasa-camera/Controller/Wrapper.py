@@ -45,14 +45,12 @@ class FfmpegWrapper:
         ]
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.controller.state.isRunning = True
-        self.controller.state.isErrored = False
 
     def stopProcess(self):
         # TODO - Perhaps killall ffmpeg would be better?
         print("[Wrapper] Killing Ffmpeg.")
         self.ffmpegProcess.kill()
         self.controller.state.isRunning = False
-        self.controller.state.isErrored = False
 
     def restartProcess(self):
         print("[Wrapper] Restarting Ffmpeg.")
