@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import HAListener
 import Wrapper
@@ -37,10 +38,32 @@ class Controller:
             # Stop process if the camera is currently running but not enabled
             elif not(event.state.isCameraEnabled) and event.state.isRunning:
                 self.ffmpegWrapper.stopProcess()
-        elif event.changedProperty == 'isErrored':
-            # If the camera is enabled but errored then it should be restarted
-            if event.state.isErrored and event.state.isCameraEnabled:
-                self.ffmpegWrapper.restartProcess()
+        elif event.changedProperty == 'errorCount':
+            isCameraEnabled = event.state.isCameraEnabled
+            errorCount = event.state.errorCount
+            retryLimit = self.config["retrylimit"]
+            if errorCount == 0 or not(isCameraEnabled):
+                # Return since the camera either shouldn't be on, or no error is detected.
+                return
+            else:
+                # Things are currently broken
+                if errorCount <= retryLimit or retryLimit == -1:
+                    # If we haven't reached the retry limit or the user specified unlimited retries, we should restart Ffmpeg.
+                    print(f"[Controller] Restarting Ffmpeg. Retry: {errorCount}.")
+                    self.ffmpegWrapper.restartProcess()
+                else:
+                    # We should exit
+                    print("[Controller] Maximum retry attempts reached. Exiting.")
+                    self.shutdown()
+                    sys.exit("Maximum retry attempts reached. Exiting")
+
+    def shutdown(self):
+        print("[Controller] shutting down.")
+
+        # Wait for each task to cancel
+        tasks = asyncio.all_tasks()
+        for task in tasks:
+            task.cancel()
 
     def run(self):
         print("[Controller] Controller is starting.")
