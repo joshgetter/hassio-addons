@@ -19,8 +19,12 @@ class HealthChecker:
         while True:
             isErrored = self.checkHealth()
             if isErrored:
+                # Error detected. Let's increase the error count.
                 print(f'[HealthChecker] Error detected.')
-            self.controller.state.isErrored = isErrored
+                self.controller.state.errorCount += 1
+            else:
+                # It looks like things are working. Let's reset the error count.
+                self.controller.state.errorCount = 0
             await asyncio.sleep(self.sleepInterval)
 
     def stop(self):

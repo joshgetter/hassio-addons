@@ -18,9 +18,11 @@ The following is a description of each configuration item.
 
 `cameraip` - **Required**. The IP address of the Kasa camera. _Note:_ Ideally the camera will have a reserved / static IP so that this doesn't need to be updated.
 
-`cameraname` - _Default: "kasacam"_. The name of the camera. This will impact the URL of the output streams.
+`cameraname` - Default: "kasacam". The name of the camera. This will impact the URL of the output streams.
 
-`toggleentity` - Optionally you can provide an entity ID of a Home Assistant toggle. If provided the add-on will observe the toggle and enable / disable camera streaming based on it's value.
+`retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
+
+`toggleentity` - Optional. You can provide an entity ID of a Home Assistant toggle. If provided the add-on will observe the toggle and enable / disable camera streaming based on it's value.
 
 Example configuration:
 ``` yaml
@@ -28,6 +30,7 @@ kasausername: user@example.com
 kasapassword: password1234
 cameraip: 192.168.1.2
 cameraname: livingroom
+retrylimit: 5
 toggleentity: input_boolean.kasa_camera_enabled
 ```
 ### Network

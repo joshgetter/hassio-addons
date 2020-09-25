@@ -29,6 +29,17 @@ class State:
         self._isErrored = value
         if(oldValue != value):
             self.notifyObservers('isErrored')
+
+    @property
+    def errorCount(self):
+        return self._errorCount
+
+    @errorCount.setter
+    def errorCount(self, value):
+        oldValue = self._errorCount
+        self._errorCount = value
+        if(oldValue != value):
+            self.notifyObservers('errorCount')
             
     @property
     def isRunning(self):
@@ -45,6 +56,7 @@ class State:
         self._isCameraEnabled = False
         self._isErrored = False
         self._isRunning = False
+        self._errorCount = 0
         self._observers = []
         global Event
         Event = namedtuple('Event', 'changedProperty state')
