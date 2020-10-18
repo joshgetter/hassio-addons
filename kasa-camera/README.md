@@ -22,6 +22,8 @@ The following is a description of each configuration item.
 
 `retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
 
+`retrysleep` - Default: 30. The amount of time (in seconds) to wait before attempting the next retry. A value of 0 will result in no waiting between retries.  Waiting between retries can be useful, since it allows some time for the camera to recover from errors (usually I/O errors) before a new request comes in.
+
 `toggleentity` - Optional. You can provide an entity ID of a Home Assistant toggle. If provided the add-on will observe the toggle and enable / disable camera streaming based on it's value.
 
 Example configuration:
@@ -31,6 +33,7 @@ kasapassword: password1234
 cameraip: 192.168.1.2
 cameraname: livingroom
 retrylimit: 5
+retrysleep: 30
 toggleentity: input_boolean.kasa_camera_enabled
 ```
 ### Network
