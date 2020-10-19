@@ -1,6 +1,7 @@
 import subprocess
 import base64
 import asyncio
+import time
 import HealthChecker
 
 class FfmpegWrapper:
@@ -55,6 +56,7 @@ class FfmpegWrapper:
     def restartProcess(self):
         print("[Wrapper] Restarting Ffmpeg.")
         self.stopProcess()
+        time.sleep(self.controller.config["retrysleep"])
         self.startProcess()
 
     def buildAuthToken(self):
