@@ -7,7 +7,8 @@ import HealthChecker
 class FfmpegWrapper:
     def startProcess(self):
         print("[Wrapper] Starting Ffmpeg.")
-        startCommand = [
+        startCommand = 
+        [
             'ffmpeg',
             '-nostdin',
             '-loglevel',
@@ -24,8 +25,10 @@ class FfmpegWrapper:
             f'Authorization: Basic {self.authToken}',
             '-f',
             'h264',
-            '-i',
-            f'https://{self.controller.config["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd',
+            '-i'
+        ]
+        + self.buildInput() +
+        [
             '-map',
             '0',
             '-vcodec',
@@ -44,6 +47,8 @@ class FfmpegWrapper:
             '-y',
             f'/tmp/streaming/thumbnails/{self.controller.config["cameraname"]}.jpg'
         ]
+        # TESTING
+        print(startCommand)
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.controller.state.isRunning = True
 
@@ -68,6 +73,12 @@ class FfmpegWrapper:
         encodedBytes = base64.b64encode(input.encode("utf-8"))
         encodedString = str(encodedBytes, "utf-8")
         return encodedString
+
+    def buildInput(self):
+        inputs = []
+        for camera in self.controller.config["cameras"]:
+            inputs.append(f'https://{camera['cameraip']}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd')
+        return inputs
 
     def __init__(self, controller, healthCheckSleepInterval):
         self.controller = controller
