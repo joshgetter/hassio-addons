@@ -1,10 +1,10 @@
 {
     "name": "Kasa Camera",
-    "version": "1.4",
+    "version": "1.5",
     "slug": "kasa_cam",
     "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
     "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
-    "startup": "before",
+    "startup": "application",
     "boot": "auto",
     "homeassistant_api": true,
     "image": "joshgetter/{arch}-addon-kasa-camera",
