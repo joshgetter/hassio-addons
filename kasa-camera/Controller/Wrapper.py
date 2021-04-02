@@ -12,8 +12,39 @@ class FfmpegWrapper:
             'ffmpeg',
             '-nostdin',
             '-loglevel',
-            'warning'
-        ] + self.buildInput() + self.buildOutput()
+            'warning',
+            '-reconnect',
+            '1',
+            '-reconnect_at_eof',
+            '1',
+            '-reconnect_streamed',
+            '1',
+            '-reconnect_delay_max',
+            '60',
+            '-headers',
+            f'Authorization: Basic {self.authToken}',
+            '-f',
+            'h264',
+            '-i',
+            f'https://{self.camera["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd',
+            '-map',
+            '0',
+            '-vcodec',
+            'copy',
+            '-preset',
+            'veryfast',
+            '-f',
+            'flv',
+            f'rtmp://localhost/live/{self.camera["cameraname"]}',
+            '-map',
+            '0',
+            '-r',
+            '1/5',
+            '-update',
+            '1',
+            '-y',
+            f'/tmp/streaming/thumbnails/{self.camera["cameraname"]}.jpg'
+        ]
 
         # TESTING
         print(startCommand)
@@ -42,47 +73,6 @@ class FfmpegWrapper:
         encodedBytes = base64.b64encode(input.encode("utf-8"))
         encodedString = str(encodedBytes, "utf-8")
         return encodedString
-
-    def buildInput(self):
-        input = [
-            '-reconnect',
-            '1',
-            '-reconnect_at_eof',
-            '1',
-            '-reconnect_streamed',
-            '1',
-            '-reconnect_delay_max',
-            '60',
-            '-headers',
-            f'Authorization: Basic {self.authToken}',
-            '-f',
-            'h264',
-            '-i',
-            f'https://{self.camera["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd'
-        ]
-        return input
-
-    def buildOutput(self):
-        output = [
-                '-map',
-                '0',
-                '-vcodec',
-                'copy',
-                '-preset',
-                'veryfast',
-                '-f',
-                'flv',
-                f'rtmp://localhost/live/{self.camera["cameraname"]}',
-                '-map',
-                '0',
-                '-r',
-                '1/5',
-                '-update',
-                '1',
-                '-y',
-                f'/tmp/streaming/thumbnails/{self.camera["cameraname"]}.jpg'
-            ]
-        return output
 
     def stateHandler(self, event):
         if event.changedProperty == 'isCameraEnabled':
