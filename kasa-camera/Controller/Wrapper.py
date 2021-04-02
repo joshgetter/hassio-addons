@@ -3,10 +3,11 @@ import base64
 import asyncio
 import time
 import HealthChecker
+import WrapperState
 
 class FfmpegWrapper:
     def startProcess(self):
-        print("[Wrapper] Starting Ffmpeg.")
+        print(f'[Wrapper {self.camera["cameraname"]}] Starting Ffmpeg.')
         startCommand = [
             'ffmpeg',
             '-nostdin',
@@ -25,7 +26,7 @@ class FfmpegWrapper:
             '-f',
             'h264',
             '-i',
-            f'https://{self.controller.config["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd',
+            f'https://{self.camera["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd',
             '-map',
             '0',
             '-vcodec',
@@ -34,7 +35,7 @@ class FfmpegWrapper:
             'veryfast',
             '-f',
             'flv',
-            f'rtmp://localhost/live/{self.controller.config["cameraname"]}',
+            f'rtmp://localhost/live/{self.camera["cameraname"]}',
             '-map',
             '0',
             '-r',
@@ -42,19 +43,23 @@ class FfmpegWrapper:
             '-update',
             '1',
             '-y',
-            f'/tmp/streaming/thumbnails/{self.controller.config["cameraname"]}.jpg'
+            f'/tmp/streaming/thumbnails/{self.camera["cameraname"]}.jpg'
         ]
+
+        # TESTING
+        print(startCommand)
+        
         self.ffmpegProcess = subprocess.Popen(startCommand)
-        self.controller.state.isRunning = True
+        self.state.isRunning = True
 
     def stopProcess(self):
         # TODO - Perhaps killall ffmpeg would be better?
-        print("[Wrapper] Killing Ffmpeg.")
+        print(f'[Wrapper {self.camera["cameraname"]}] Killing Ffmpeg.')
         self.ffmpegProcess.kill()
-        self.controller.state.isRunning = False
+        self.state.isRunning = False
 
     def restartProcess(self):
-        print("[Wrapper] Restarting Ffmpeg.")
+        print(f'[Wrapper {self.camera["cameraname"]}] Restarting Ffmpeg.')
         self.stopProcess()
         time.sleep(self.controller.config["retrysleep"])
         self.startProcess()
@@ -69,10 +74,43 @@ class FfmpegWrapper:
         encodedString = str(encodedBytes, "utf-8")
         return encodedString
 
-    def __init__(self, controller, healthCheckSleepInterval):
+    def stateHandler(self, event):
+        if event.changedProperty == 'isCameraEnabled':
+            # Start process if the camera is enabled but not currently running
+            if event.state.isCameraEnabled and not(self.state.isRunning):
+                self.startProcess()
+            # Stop process if the camera is currently running but not enabled
+            elif not(event.state.isCameraEnabled) and self.state.isRunning:
+                self.stopProcess()
+        elif event.changedProperty == 'errorCount':
+            isCameraEnabled = self.controller.state.isCameraEnabled
+            errorCount = event.state.errorCount
+            retryLimit = self.controller.config["retrylimit"]
+            if errorCount == 0 or not(isCameraEnabled):
+                # Return since the camera either shouldn't be on, or no error is detected.
+                return
+            else:
+                # Things are currently broken
+                if errorCount <= retryLimit or retryLimit == -1:
+                    # If we haven't reached the retry limit or the user specified unlimited retries, we should restart Ffmpeg.
+                    print(f'[Wrapper {self.camera["cameraname"]}] Restarting Ffmpeg. Retry: {errorCount}.')
+                    self.restartProcess()
+                else:
+                    # We should exit
+                    self.controller.shutdown()
+
+    def __init__(self, controller, camera, healthCheckSleepInterval):
         self.controller = controller
         self.authToken = self.buildAuthToken()
-        
+        self.camera = camera
+
+        # Create State object
+        self.state = WrapperState.WrapperState()
+
+        # Setup state listeners
+        self.controller.state.bind_to(self.stateHandler)
+        self.state.bind_to(self.stateHandler)
+
         # Setup Health Checker
-        self.healthChecker = HealthChecker.HealthChecker(controller, healthCheckSleepInterval)
+        self.healthChecker = HealthChecker.HealthChecker(self, healthCheckSleepInterval)
 
