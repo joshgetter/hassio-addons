@@ -1,6 +1,6 @@
 {
     "name": "Kasa Camera",
-    "version": "1.5",
+    "version": "1.6",
     "slug": "kasa_cam",
     "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
     "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -11,16 +11,24 @@
     "options": {
         "kasausername" : null,
         "kasapassword" : null,
-        "cameraip" : null,
-        "cameraname": "kasacam",
+        "cameras": [
+            {
+              "cameraname": "",
+              "cameraip": ""
+            }
+        ],
         "retrylimit": 5,
         "retrysleep": 30
     },
     "schema": {
         "kasausername": "str",
         "kasapassword": "str",
-        "cameraip": "str",
-        "cameraname": "str",
+        "cameras": [
+            { 
+                "cameraname": "str", 
+                "cameraip": "str" 
+            }
+        ],
         "retrylimit": "int",
         "retrysleep": "float",
         "toggleentity": "str?"

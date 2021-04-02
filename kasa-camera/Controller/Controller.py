@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 class Controller:
     HA_REST_URL = "http://supervisor/core/api"
+    ffmpegWrappers = []
 
     def loadConfiguration(self, path):
         print("[Controller] Loading configuration.")
@@ -30,33 +31,6 @@ class Controller:
         response = requests.get(url=url, headers=headers).json()
         return response["state"] == "on"
 
-    def stateHandler(self, event):
-        if event.changedProperty == 'isCameraEnabled':
-            # Start process if the camera is enabled but not currently running
-            if event.state.isCameraEnabled and not(event.state.isRunning):
-                self.ffmpegWrapper.startProcess()
-            # Stop process if the camera is currently running but not enabled
-            elif not(event.state.isCameraEnabled) and event.state.isRunning:
-                self.ffmpegWrapper.stopProcess()
-        elif event.changedProperty == 'errorCount':
-            isCameraEnabled = event.state.isCameraEnabled
-            errorCount = event.state.errorCount
-            retryLimit = self.config["retrylimit"]
-            if errorCount == 0 or not(isCameraEnabled):
-                # Return since the camera either shouldn't be on, or no error is detected.
-                return
-            else:
-                # Things are currently broken
-                if errorCount <= retryLimit or retryLimit == -1:
-                    # If we haven't reached the retry limit or the user specified unlimited retries, we should restart Ffmpeg.
-                    print(f"[Controller] Restarting Ffmpeg. Retry: {errorCount}.")
-                    self.ffmpegWrapper.restartProcess()
-                else:
-                    # We should exit
-                    print("[Controller] Maximum retry attempts reached. Exiting.")
-                    self.shutdown()
-                    sys.exit("Maximum retry attempts reached. Exiting")
-
     def shutdown(self):
         print("[Controller] shutting down.")
 
@@ -64,6 +38,8 @@ class Controller:
         tasks = asyncio.all_tasks()
         for task in tasks:
             task.cancel()
+        sys.exit("Maximum retry attempts reached. Exiting")
+
 
     def run(self):
         print("[Controller] Controller is starting.")
@@ -76,10 +52,8 @@ class Controller:
         self.state = State.State()
 
         # Create Ffmpeg wrapper
-        self.ffmpegWrapper = Wrapper.FfmpegWrapper(self, 10)
-
-        # Register observer
-        self.state.bind_to(self.stateHandler)
+        for camera in self.config["cameras"]:
+            self.ffmpegWrappers.append(Wrapper.FfmpegWrapper(self, camera, 10))
 
         # Setup home assistant listener
         self.haListener = HAListener.HAListener(self)
