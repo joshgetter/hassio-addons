@@ -7,8 +7,7 @@ import HealthChecker
 class FfmpegWrapper:
     def startProcess(self):
         print("[Wrapper] Starting Ffmpeg.")
-        startCommand = 
-        [
+        startCommand = [
             'ffmpeg',
             '-nostdin',
             '-loglevel',
@@ -24,31 +23,12 @@ class FfmpegWrapper:
             '-headers',
             f'Authorization: Basic {self.authToken}',
             '-f',
-            'h264',
-            '-i'
-        ]
-        + self.buildInput() +
-        [
-            '-map',
-            '0',
-            '-vcodec',
-            'copy',
-            '-preset',
-            'veryfast',
-            '-f',
-            'flv',
-            f'rtmp://localhost/live/{self.controller.config["cameraname"]}',
-            '-map',
-            '0',
-            '-r',
-            '1/5',
-            '-update',
-            '1',
-            '-y',
-            f'/tmp/streaming/thumbnails/{self.controller.config["cameraname"]}.jpg'
-        ]
+            'h264'
+        ] + self.buildInput() + self.buildOutput()
+
         # TESTING
         print(startCommand)
+        
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.controller.state.isRunning = True
 
@@ -77,8 +57,37 @@ class FfmpegWrapper:
     def buildInput(self):
         inputs = []
         for camera in self.controller.config["cameras"]:
-            inputs.append(f'https://{camera['cameraip']}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd')
+            cameraInput = [
+                '-i',
+                f'https://{camera["cameraip"]}:19443/https/stream/mixed?video=h264&audio=g711&resolution=hd'
+            ]
+            inputs.extend(cameraInput)
         return inputs
+
+    def buildOutput(self):
+        outputs = []
+        for index, camera in enumerate(self.controller.config["cameras"]):
+            cameraOutput = [
+                '-map',
+                str(index),
+                '-vcodec',
+                'copy',
+                '-preset',
+                'veryfast',
+                '-f',
+                'flv',
+                f'rtmp://localhost/live/{camera["cameraname"]}',
+                '-map',
+                str(index),
+                '-r',
+                '1/5',
+                '-update',
+                '1',
+                '-y',
+                f'/tmp/streaming/thumbnails/{camera["cameraname"]}.jpg'
+            ]
+            outputs.extend(cameraOutput)
+        return outputs
 
     def __init__(self, controller, healthCheckSleepInterval):
         self.controller = controller
