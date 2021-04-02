@@ -16,9 +16,11 @@ The following is a description of each configuration item.
 
 `kasapassword` - **Required**. The password for your Kasa account.
 
-`cameraip` - **Required**. The IP address of the Kasa camera. _Note:_ Ideally the camera will have a reserved / static IP so that this doesn't need to be updated.
+`cameras` - Array of camera objects. Each has the following properties:
 
-`cameraname` - Default: "kasacam". The name of the camera. This will impact the URL of the output streams.
+* `cameraip` - **Required**. The IP address of the Kasa camera. _Note:_ Ideally the camera will have a reserved / static IP so that this doesn't need to be updated.
+
+* `cameraname` - Default: "kasacam". The name of the camera. This will impact the URL of the output streams.
 
 `retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
 
@@ -30,8 +32,11 @@ Example configuration:
 ``` yaml
 kasausername: user@example.com
 kasapassword: password1234
-cameraip: 192.168.1.2
-cameraname: livingroom
+cameras:
+  - cameraname: livingroom
+    cameraip: 192.168.1.3
+  - cameraname: kitchen
+    cameraip: 192.168.1.2
 retrylimit: 5
 retrysleep: 30
 toggleentity: input_boolean.kasa_camera_enabled
@@ -54,7 +59,7 @@ Additonally the add-on will intermittently generate thumbnail images from the ca
 Note that the output will be at `HA IP` which is the IP address of your Home Assistant instance **not** the IP of the camera.
 
 ## Adding Camera to Home Assistant
-You can add the camera to Home Assistant using the above output streams.  This demonstrates how you'd add a camera based on the example configuration above:
+You can add the camera(s) to Home Assistant using the above output streams.  This demonstrates how you'd add a camera based on the example configuration above:
 
 ``` yaml
 camera:
@@ -62,4 +67,8 @@ camera:
     name: "Living Room Camera"
     still_image_url: "http://<HA IP>:43330/thumbnails/livingroom.jpg"
     stream_source: "http://<HA IP>:43330/hls/livingroom.m3u8"
+  - platform: generic
+    name: "Kitchen Camera"
+    still_image_url: "http://<HA IP>:43330/thumbnails/kitchen.jpg"
+    stream_source: "http://<HA IP>:43330/hls/kitchen.m3u8"
 ```
