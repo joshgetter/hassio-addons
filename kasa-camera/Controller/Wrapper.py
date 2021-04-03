@@ -45,9 +45,6 @@ class FfmpegWrapper:
             '-y',
             f'/tmp/streaming/thumbnails/{self.camera["cameraname"]}.jpg'
         ]
-
-        # TESTING
-        print(startCommand)
         
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.state.isRunning = True

@@ -20,7 +20,7 @@ The following is a description of each configuration item.
 
 * `cameraip` - **Required**. The IP address of the Kasa camera. _Note:_ Ideally the camera will have a reserved / static IP so that this doesn't need to be updated.
 
-* `cameraname` - Default: "kasacam". The name of the camera. This will impact the URL of the output streams.
+* `cameraname` - **Required**. The name of the camera. This will impact the URL of the output streams.
 
 `retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
 

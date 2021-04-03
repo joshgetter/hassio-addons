@@ -1,6 +1,6 @@
 {
     "name": "Kasa Camera",
-    "version": "1.6",
+    "version": "1.7",
     "slug": "kasa_cam",
     "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
     "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
