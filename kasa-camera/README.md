@@ -22,6 +22,8 @@ The following is a description of each configuration item.
 
 * `cameraname` - **Required**. The name of the camera. This will impact the URL of the output streams.
 
+* `videofilter` - Optional. You can provide a video filter to ffmpeg. This can be useful if you want to rotate the video for example. Provide any string that can be used as an argument to the `vf` parameter in ffmpeg. In the configuration example below the supplied argument is `transform=clock`. This would rotate the video clockwise 90 degrees. Additional FFmpeg filter [documentation](https://trac.ffmpeg.org/wiki/FilteringGuide).
+
 `retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
 
 `retrysleep` - Default: 30. The amount of time (in seconds) to wait before attempting the next retry. A value of 0 will result in no waiting between retries.  Waiting between retries can be useful, since it allows some time for the camera to recover from errors (usually I/O errors) before a new request comes in.
@@ -37,6 +39,7 @@ cameras:
     cameraip: 192.168.1.3
   - cameraname: kitchen
     cameraip: 192.168.1.2
+    videofilter: transform=clock
 retrylimit: 5
 retrysleep: 30
 toggleentity: input_boolean.kasa_camera_enabled
