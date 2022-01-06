@@ -30,11 +30,13 @@ class FfmpegWrapper:
             '-map',
             '0',
             '-vcodec',
-            'copy',
+            'libx264',
             '-preset',
             'veryfast',
             '-f',
             'flv',
+            '' if self.camera.get("videofilter") is None else '-vf',
+            self.camera.get("videofilter") or '',
             f'rtmp://localhost/live/{self.camera["cameraname"]}',
             '-map',
             '0',
@@ -45,6 +47,9 @@ class FfmpegWrapper:
             '-y',
             f'/tmp/streaming/thumbnails/{self.camera["cameraname"]}.jpg'
         ]
+
+        # Remove any empty strings from the command
+        startCommand = list(filter(lambda x: x is not None and x != '', startCommand))
         
         self.ffmpegProcess = subprocess.Popen(startCommand)
         self.state.isRunning = True

@@ -1,44 +1,45 @@
 {
-    "name": "Kasa Camera",
-    "version": "1.7",
-    "slug": "kasa_cam",
-    "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
-    "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
-    "startup": "application",
-    "boot": "auto",
-    "homeassistant_api": true,
-    "image": "joshgetter/{arch}-addon-kasa-camera",
-    "options": {
-        "kasausername" : null,
-        "kasapassword" : null,
-        "cameras": [
-            {
-              "cameraname": "",
-              "cameraip": ""
-            }
-        ],
-        "retrylimit": 5,
-        "retrysleep": 30
-    },
-    "schema": {
-        "kasausername": "str",
-        "kasapassword": "str",
-        "cameras": [
-            { 
-                "cameraname": "str", 
-                "cameraip": "str" 
-            }
-        ],
-        "retrylimit": "int",
-        "retrysleep": "float",
-        "toggleentity": "str?"
-    },
-    "ports":{
-        "80/tcp": 43330,
-        "1935/tcp": 43331
-    },
-    "ports_description":{
-        "80/tcp": "HLS stream output",
-        "1935/tcp": "RTMP stream output"
-    }
+  "name": "Kasa Camera",
+  "version": "1.8",
+  "slug": "kasa_cam",
+  "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "startup": "application",
+  "boot": "auto",
+  "homeassistant_api": true,
+  "image": "joshgetter/{arch}-addon-kasa-camera",
+  "options": {
+      "kasausername" : null,
+      "kasapassword" : null,
+      "cameras": [
+          {
+            "cameraname": "",
+            "cameraip": ""
+          }
+      ],
+      "retrylimit": 5,
+      "retrysleep": 30
+  },
+  "schema": {
+      "kasausername": "str",
+      "kasapassword": "str",
+      "cameras": [
+          { 
+              "cameraname": "str", 
+              "cameraip": "str" ,
+              "videofilter": "str?"
+          }
+      ],
+      "retrylimit": "int",
+      "retrysleep": "float",
+      "toggleentity": "str?"
+  },
+  "ports":{
+      "80/tcp": 43330,
+      "1935/tcp": 43331
+  },
+  "ports_description":{
+      "80/tcp": "HLS stream output",
+      "1935/tcp": "RTMP stream output"
   }
+}
