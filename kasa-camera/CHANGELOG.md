@@ -7,3 +7,14 @@
 ## [1.8] 2022-01-06
 ### Added
 - Support for video filters (for example video rotation)
+
+## [2.0] 2022-01-17
+This release includes a re-write of the application. As such I recommend creating a backup of the add-on and/or Home Assistant prior to upgrading.
+
+This update includes audio support. Please see the readme.md file for details on how to get the stream setup in Home Assistant with audio.
+
+As audio is now supported the process requires more processing than it did before. Please note that this version will use more CPU.
+
+### Added
+- Audio support.
+- Optional "loglevel" configuration setting.

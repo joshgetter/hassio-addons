@@ -6,7 +6,9 @@ nginx
 echo "Nginx Started"
 
 echo "Starting controller"
-python3 -u /Controller/Controller.py
 
-# TESTING - keeps docker container running
-#tail -f /dev/null
+cd /app
+dotnet KasaStreamer.dll
+
+# # TESTING - keeps docker container running
+# tail -f /dev/null
