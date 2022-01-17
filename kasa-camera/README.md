@@ -30,6 +30,8 @@ The following is a description of each configuration item.
 
 `toggleentity` - Optional. You can provide an entity ID of a Home Assistant toggle. If provided the add-on will observe the toggle and enable / disable camera streaming based on it's value.
 
+`loglevel` - Default: 2. Adjust the application log level. Enter a value between 0 (most verbose) - 6 (no logging).
+
 Example configuration:
 ``` yaml
 kasausername: user@example.com
@@ -43,6 +45,7 @@ cameras:
 retrylimit: 5
 retrysleep: 30
 toggleentity: input_boolean.kasa_camera_enabled
+loglevel: 2
 ```
 ### Network
 The add-on exposes two ports. One for RTMP video output, and one for HTTP output.  By default they will be mapped in the following way, so that they don't conflict with the typical HTTP and RTMP ports on your host system.  Feel free to change these as needed.
@@ -62,16 +65,19 @@ Additonally the add-on will intermittently generate thumbnail images from the ca
 Note that the output will be at `HA IP` which is the IP address of your Home Assistant instance **not** the IP of the camera.
 
 ## Adding Camera to Home Assistant
-You can add the camera(s) to Home Assistant using the above output streams.  This demonstrates how you'd add a camera based on the example configuration above:
+You can add the camera(s) to Home Assistant using the above output streams.  This demonstrates how you'd add a camera based on the example configuration above.
+
+
+**Note** - Home Assistant doesn't seem to support audio with the HLS stream produced by this add-on. If you need audio use the RTMP stream produced by this add-on instead (see example below).
 
 ``` yaml
 camera:
   - platform: generic
     name: "Living Room Camera"
     still_image_url: "http://<HA IP>:43330/thumbnails/livingroom.jpg"
-    stream_source: "http://<HA IP>:43330/hls/livingroom.m3u8"
+    stream_source: "rtmp://<HA IP>:43331/live/livingroom"
   - platform: generic
     name: "Kitchen Camera"
     still_image_url: "http://<HA IP>:43330/thumbnails/kitchen.jpg"
-    stream_source: "http://<HA IP>:43330/hls/kitchen.m3u8"
+    stream_source: "rtmp://<HA IP>:43331/live/kitchen"
 ```
