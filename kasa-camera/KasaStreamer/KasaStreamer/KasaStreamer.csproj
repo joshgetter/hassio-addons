@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Data\" />
+    <None Remove="Microsoft.Extensions.Configuration" />
+    <None Remove="Microsoft.Extensions.Configuration.Json" />
+    <None Remove="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <None Remove="Microsoft.Extensions.Configuration.Binder" />
+    <None Remove="FFMpegCore" />
+    <None Remove="Microsoft.Extensions.DependencyInjection" />
+    <None Remove="Microsoft.Extensions.Http" />
+    <None Remove="System.Linq.Parallel" />
+    <None Remove="Microsoft.AspNetCore.WebUtilities" />
+    <None Remove="FFmpegArgs" />
+    <None Remove="FFmpegArgs.Inputs" />
+    <None Remove="FFmpegArgs.Outputs" />
+    <None Remove="FFmpegArgs.Filters" />
+    <None Remove="FFmpegArgs.Executes" />
+    <None Remove="Xabe.FFmpeg" />
+    <None Remove="Microsoft.Extensions.Hosting" />
+    <None Remove="NReco.VideoConverter" />
+    <None Remove="NReco.VideoConverter.LT" />
+    <None Remove="Microsoft.Extensions.Logging.Console" />
+    <None Remove="Microsoft.AspNetCore.WebSockets" />
+    <None Remove="HassClient.WS" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="2.2.1" />
+    <PackageReference Include="HassClient.WS" Version="1.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="options.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
