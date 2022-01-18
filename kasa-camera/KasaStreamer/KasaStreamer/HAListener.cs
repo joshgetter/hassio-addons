@@ -19,6 +19,7 @@ namespace KasaStreamer
         private readonly ILogger<HAListener> _logger;
         private readonly HassWSApi _webSocket;
         private readonly Configuration _config;
+        private readonly bool _toggleEntityProvided;
         #endregion
 
         #region Events
@@ -34,7 +35,8 @@ namespace KasaStreamer
             _logger = logger;
             _webSocket = webSocket;
             _config = config;
-            
+            _toggleEntityProvided = !string.IsNullOrWhiteSpace(config?.ToggleEntity);
+
         }
         #endregion
 
@@ -44,9 +46,12 @@ namespace KasaStreamer
         /// </summary>
         public async Task Start()
         {
-            var connectionParameters = ConnectionParameters.CreateForAddonConnection();
-            await _webSocket.ConnectAsync(connectionParameters);
-            _webSocket.StateChagedEventListener.SubscribeEntityStatusChanged(_config.ToggleEntity, ToggleStateChangedInternal);
+            if (_toggleEntityProvided)
+            {
+                var connectionParameters = ConnectionParameters.CreateForAddonConnection();
+                await _webSocket.ConnectAsync(connectionParameters);
+                _webSocket.StateChagedEventListener.SubscribeEntityStatusChanged(_config.ToggleEntity, ToggleStateChangedInternal);
+            }
         }
 
         /// <summary>
@@ -54,7 +59,10 @@ namespace KasaStreamer
         /// </summary>
         public async Task Stop()
         {
-            await _webSocket.CloseAsync();
+            if (_toggleEntityProvided)
+            {
+                await _webSocket.CloseAsync();
+            }
         }
 
         /// <summary>
@@ -63,15 +71,18 @@ namespace KasaStreamer
         /// <returns>A boolean representing the current toggle entity's state.</returns>
         public async Task<bool> GetToggleState()
         {
-            if (string.IsNullOrWhiteSpace(_config.ToggleEntity))
+            if (_toggleEntityProvided)
+            {
+                var states = await _webSocket.GetStatesAsync();
+                var toggleState = states.FirstOrDefault(entity => entity.EntityId == _config.ToggleEntity)?.State?.Equals("on", StringComparison.CurrentCultureIgnoreCase) ?? true;
+                _logger.LogInformation($"Initial toggle state: {(toggleState ? "Enabled" : "Disabled")}");
+                return toggleState;
+            }
+            else
             {
                 // Return true if the toggle entity isn't provided.
                 return true;
             }
-            var states = await _webSocket.GetStatesAsync();
-            var toggleState= states.FirstOrDefault(entity => entity.EntityId == _config.ToggleEntity)?.State?.Equals("on", StringComparison.CurrentCultureIgnoreCase) ?? true;
-            _logger.LogInformation($"Initial toggle state: {(toggleState ? "Enabled" : "Disabled")}");
-            return toggleState;
         }
 
         /// <summary>
