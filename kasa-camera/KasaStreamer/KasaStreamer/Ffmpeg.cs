@@ -81,7 +81,10 @@ namespace KasaStreamer
                      // VIDEO OUTPUT
                      $"-map 0:v:0 " +
                      $"-map 1:a:0 " +
-                     $"-vcodec libx264 " +
+                     /* Ideally we want to copy the video stream instead of re-encoding it. This saves CPU resources.
+                      * If a video filter is specified we must re-encode the stream though. */
+                     (_cameraConfig.VideoFilter == null ? "-vcodec copy " : "-vcodec libx264 ") +
+                     // We must re-encode the audio stream.
                      $"-acodec aac " +
                      $"-f flv " +
                      (_cameraConfig.VideoFilter == null ? string.Empty : $"-vf {_cameraConfig.VideoFilter} ") +
