@@ -1,4 +1,8 @@
 # Changelog
+## [2.2] 2022-01-20
+### Fixed
+- High CPU usage. CPU usage should be reduced. If you're using videofilters CPU usage may be higher.
+
 ## [2.1] 2022-01-18
 ### Fixed
 - Error if a toggle entity isn't provided.
