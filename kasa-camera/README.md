@@ -41,9 +41,11 @@ kasapassword: password1234
 cameras:
   - cameraname: livingroom
     cameraip: 192.168.1.3
+    enableAudio: false
   - cameraname: kitchen
     cameraip: 192.168.1.2
     videofilter: transform=clock
+    enableAudio: true
 retrylimit: 5
 retrysleep: 30
 toggleentity: input_boolean.kasa_camera_enabled
