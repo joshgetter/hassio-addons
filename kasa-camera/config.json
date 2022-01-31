@@ -1,6 +1,6 @@
 {
   "name": "Kasa Camera",
-  "version": "2.1",
+  "version": "2.2",
   "slug": "kasa_cam",
   "description": "Add-on to integrate with some Kasa cameras that don't explicitly expose their streams.",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
@@ -14,7 +14,8 @@
       "cameras": [
           {
             "cameraname": "",
-            "cameraip": ""
+            "cameraip": "",
+            "enableAudio": false
           }
       ],
       "retrylimit": 5,
@@ -28,6 +29,7 @@
           { 
               "cameraname": "str", 
               "cameraip": "str" ,
+              "enableAudio": "bool?",
               "videofilter": "str?"
           }
       ],

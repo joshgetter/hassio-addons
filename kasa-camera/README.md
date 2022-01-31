@@ -22,7 +22,9 @@ The following is a description of each configuration item.
 
 * `cameraname` - **Required**. The name of the camera. This will impact the URL of the output streams.
 
-* `videofilter` - Optional. You can provide a video filter to ffmpeg. This can be useful if you want to rotate the video for example. Provide any string that can be used as an argument to the `vf` parameter in ffmpeg. In the configuration example below the supplied argument is `transform=clock`. This would rotate the video clockwise 90 degrees. Additional FFmpeg filter [documentation](https://trac.ffmpeg.org/wiki/FilteringGuide).
+* `enableAudio` - Default: false. Whether the camera's audio should be included in the stream. **Note** - Enabling audio will use significant CPU usage.
+
+* `videofilter` - Optional. You can provide a video filter to ffmpeg. This can be useful if you want to rotate the video for example. Provide any string that can be used as an argument to the `vf` parameter in ffmpeg. In the configuration example below the supplied argument is `transform=clock`. This would rotate the video clockwise 90 degrees. Additional FFmpeg filter [documentation](https://trac.ffmpeg.org/wiki/FilteringGuide). **Note**: Normally the video processor (FFmpeg) will copy the video stream from the camera rather than re-encoding it. If a video filter is provided then the video stream must be re-encoded, this will result in higher CPU usage.
 
 `retrylimit` - Default: 5. The maximum number of consecutive attempts to restart a failed stream. A single success will reset this counter. A value of `-1` will disable any limit on retry attempts.
 

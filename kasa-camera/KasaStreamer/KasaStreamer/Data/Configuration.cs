@@ -16,6 +16,7 @@ namespace KasaStreamer.Data
     {
         public string CameraName { get; set; }
         public string CameraIP { get; set; }
+        public bool EnableAudio { get; set; }
         public string VideoFilter { get; set; }
     }
 }
