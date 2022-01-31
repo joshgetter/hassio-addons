@@ -51,6 +51,7 @@ namespace KasaStreamer
                     _ffmpeg.BeginErrorReadLine();
                     _ffmpeg.BeginOutputReadLine();
 
+                    _logger.LogDebug($"Starting Ffmpeg with args:\n{_ffmpeg.StartInfo.Arguments}");
                     _logger.LogInformation($"[{_cameraConfig.CameraName}] Ffmpeg started");
                 }
                 catch (Exception ex)
@@ -74,16 +75,13 @@ namespace KasaStreamer
                      $"-vsync 1 " +
                      $"-i tcp://{IPAddress.Loopback}:{videoPort} " +
                      // AUDIO INPUT
-                     $"-f mulaw " +
-                     $"-ar 8000 " +
-                     $"-async 1 " +
-                     $"-i tcp://{IPAddress.Loopback}:{audioPort} " +
+                     (_cameraConfig.EnableAudio ? BuildAudioArguments(audioPort) : string.Empty) +
                      // VIDEO OUTPUT
                      $"-map 0:v:0 " +
-                     $"-map 1:a:0 " +
+                     (_cameraConfig.EnableAudio ? "-map 1:a:0 " : string.Empty) +
                      /* Ideally we want to copy the video stream instead of re-encoding it. This saves CPU resources.
                       * If a video filter is specified we must re-encode the stream though. */
-                     (_cameraConfig.VideoFilter == null ? "-vcodec copy " : "-vcodec libx264 ") +
+                     (IsTranscodingRequired() ? "-vcodec libx264 " : "-vcodec copy ") +
                      // We must re-encode the audio stream.
                      $"-acodec aac " +
                      $"-f flv " +
@@ -96,6 +94,30 @@ namespace KasaStreamer
                      $"-y " +
                      (_cameraConfig.VideoFilter == null ? string.Empty : $"-vf {_cameraConfig.VideoFilter} ") +
                      $"/tmp/streaming/thumbnails/{_cameraConfig.CameraName}.jpg";
+        }
+
+        /// <summary>
+        /// Build command line arguments for audio streaming.
+        /// </summary>
+        /// <param name="audioPort">The port that FFmpeg should pull the audio stream from.</param>
+        /// <returns>Arguments to add audio to the FFmpeg stream.</returns>
+        private static string BuildAudioArguments(int audioPort)
+        {
+            return
+               $"-f mulaw " +
+               $"-ar 8000 " +
+               $"-async 1 " +
+               $"-i tcp://{IPAddress.Loopback}:{audioPort} ";
+        }
+
+        /// <summary>
+        /// Determines if FFmpeg needs to transcode the video stream or just copy it.
+        /// </summary>
+        /// <returns>A boolean indicating whether FFmpeg needs to transcode the video stream.</returns>
+        private bool IsTranscodingRequired()
+        {
+            // If camera audio is requested or a video filter is supplied we must transcode the video stream.
+            return _cameraConfig.EnableAudio || !string.IsNullOrWhiteSpace(_cameraConfig.VideoFilter);
         }
 
         /// <summary>

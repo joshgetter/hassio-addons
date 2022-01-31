@@ -14,7 +14,8 @@
       "cameras": [
           {
             "cameraname": "",
-            "cameraip": ""
+            "cameraip": "",
+            "enableAudio": false
           }
       ],
       "retrylimit": 5,
@@ -28,6 +29,7 @@
           { 
               "cameraname": "str", 
               "cameraip": "str" ,
+              "enableAudio": "bool?",
               "videofilter": "str?"
           }
       ],

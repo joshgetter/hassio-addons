@@ -1,7 +1,7 @@
 # Changelog
-## [2.2] 2022-01-20
-### Fixed
-- High CPU usage. CPU usage should be reduced. If you're using videofilters CPU usage may be higher.
+## [2.2] 2022-01-31
+### Added
+- Configuration option to enable audio support. By default audio support will be disabled since it requires significant CPU usage. To enable audio support set the `enableAudio` to true on the respective camera configuration.
 
 ## [2.1] 2022-01-18
 ### Fixed
