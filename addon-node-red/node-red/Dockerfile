@@ -1,4 +1,4 @@
-ARG BUILD_FROM=hassioaddons/base:7.0.3
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/amd64:11.1.0
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -14,29 +14,24 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Setup base
 RUN \
     apk add --no-cache --virtual .build-dependencies \
-        g++=9.2.0-r3 \
-        gcc=9.2.0-r3 \
-        libc-dev=0.7.2-r0 \
-        linux-headers=4.19.36-r0 \
-        make=4.2.1-r2 \
-        py2-pip=18.1-r0 \
-        python2-dev=2.7.16-r3 \
+        g++=10.3.1_git20211027-r0 \
+        gcc=10.3.1_git20211027-r0 \
+        libc-dev=0.7.2-r3 \
+        linux-headers=5.10.41-r0 \
+        make=4.3-r0 \
+        py3-pip=20.3.4-r1 \
+        python3-dev=3.9.7-r4 \
     \
     && apk add --no-cache \
-        git=2.24.1-r0 \
-        lua-resty-http=0.15-r0 \
-        nginx-mod-http-lua=1.16.1-r6 \
-        nginx=1.16.1-r6  \
-        nodejs=12.15.0-r1 \
-        npm=12.15.0-r1 \
-        openssh-client=8.1_p1-r0 \
-        patch=2.7.6-r6 \
-        paxctl=0.9-r0 \
-        python2=2.7.16-r3 \
-        # Add chrome
+        git=2.34.1-r0 \
+        nginx=1.20.2-r0 \
+        nodejs=16.14.0-r0 \
+        npm=8.1.3-r0 \
+        openssh-client=8.8_p1-r1 \
+        patch=2.7.6-r7 \
+        python3=3.9.7-r4 \
+        # Add chromium
         chromium \
-    \
-    && paxctl -cm "$(command -v node)" \
     \
     && npm config set unsafe-perm true \
     \
@@ -58,29 +53,38 @@ RUN \
         /tmp/* \
         /etc/nginx
 
+# Environment variables
+ENV NODE_ICU_DATA=/opt/node_modules/full-icu
+
 # Copy root filesystem
 COPY rootfs /
 
 # Build arguments
 ARG BUILD_ARCH
 ARG BUILD_DATE
+ARG BUILD_DESCRIPTION
+ARG BUILD_NAME
 ARG BUILD_REF
+ARG BUILD_REPOSITORY
 ARG BUILD_VERSION
+
 
 # Labels
 LABEL \
-    io.hass.name="Node-RED" \
-    io.hass.description="Flow-based programming for the Internet of Things" \
+    io.hass.name="${BUILD_NAME}" \
+    io.hass.description="${BUILD_DESCRIPTION}" \
     io.hass.arch="${BUILD_ARCH}" \
     io.hass.type="addon" \
     io.hass.version=${BUILD_VERSION} \
     maintainer="Franck Nijhof <frenck@addons.community>" \
-    org.label-schema.description="Flow-based programming for the Internet of Things." \
-    org.label-schema.build-date=${BUILD_DATE} \
-    org.label-schema.name="Node-RED" \
-    org.label-schema.schema-version="1.0" \
-    org.label-schema.url="https://community.home-assistant.io/t/home-assistant-community-add-on-node-red/55023?u=frenck" \
-    org.label-schema.usage="https://github.com/hassio-addons/addon-node-red/tree/master/README.md" \
-    org.label-schema.vcs-ref=${BUILD_REF} \
-    org.label-schema.vcs-url="https://github.com/hassio-addons/addon-node-red" \
-    org.label-schema.vendor="Home Assistant Community Add-ons"
+    org.opencontainers.image.title="${BUILD_NAME}" \
+    org.opencontainers.image.description="${BUILD_DESCRIPTION}" \
+    org.opencontainers.image.vendor="Home Assistant Community Add-ons" \
+    org.opencontainers.image.authors="Franck Nijhof <frenck@addons.community>" \
+    org.opencontainers.image.licenses="MIT" \
+    org.opencontainers.image.url="https://addons.community" \
+    org.opencontainers.image.source="https://github.com/${BUILD_REPOSITORY}" \
+    org.opencontainers.image.documentation="https://github.com/${BUILD_REPOSITORY}/blob/main/README.md" \
+    org.opencontainers.image.created=${BUILD_DATE} \
+    org.opencontainers.image.revision=${BUILD_REF} \
+    org.opencontainers.image.version=${BUILD_VERSION}
