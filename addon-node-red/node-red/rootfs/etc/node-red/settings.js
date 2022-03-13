@@ -35,7 +35,6 @@
  * - logging.console.level (log_level in the add-on configuration)
  * - httpNodeAuth (http_node settings in the add-on configuration)
  * - httpStaticAuth (http_static settings in the add-on configuration)
- * - requireHttps (require_ssl setting in the add-on configuration)
  * - httpNodeRoot (set fixed to `/endpoint` )
  *
  * If you like to change those settings, some are available via the add-on
@@ -163,13 +162,14 @@ module.exports = {
   // If not set, the following default order is used:
   paletteCategories: [
     "home_assistant",
+    "home_assistant entities",
     "subflows",
     "common",
     "function",
     "network",
     "sequence",
     "parser",
-    "storage"
+    "storage",
   ],
 
   // Configure the logging output
@@ -179,15 +179,15 @@ module.exports = {
       // Whether or not to include metric events in the log output
       metrics: false,
       // Whether or not to include audit events in the log output
-      audit: false
-    }
+      audit: false,
+    },
   },
 
   // Customising the editor
   editorTheme: {
     projects: {
       // To enable the Projects feature, set this value to true
-      enabled: false
-    }
-  }
+      enabled: false,
+    },
+  },
 };
