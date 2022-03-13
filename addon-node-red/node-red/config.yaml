@@ -4,8 +4,7 @@ version: 2.0
 image: joshgetter/{arch}-home-assistant-nodered
 slug: nodered
 description: Flow-based programming for the Internet of Things
-url: https://github.com/hassio-addons/addon-node-red
-codenotary: codenotary@frenck.dev
+url: https://github.com/joshgetter/hassio-addons
 ingress: true
 ingress_port: 0
 ingress_stream: true
